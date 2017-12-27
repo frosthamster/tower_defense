@@ -1,0 +1,320 @@
+#:import EndGameScreen Visualization.EndGameScreen
+#:import GameScreen Visualization.GameScreen
+#:import LevelPickerScreen Visualization.LevelPickerScreen
+#:import ChangeLevelScreen Visualization.ChangeLevelScreen
+#:import LooseGameScreen Visualization.LooseGameScreen
+#:import GameView Visualization.GameView
+#:import TowersMenu Visualization.TowersMenu
+#:import UpgradeMenu Visualization.UpgradeMenu
+#:import TowersButton Visualization.TowerButton
+#:import MainScreen Visualization.MainScreen
+#:import ImageButton Visualization.ImageButton
+#:import Mage model.Towers.Mage
+#:import Archers model.Towers.Archers
+
+
+<Sign@Label>:
+    canvas.before:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'res/sign.png'
+
+<MainScreen>:
+    canvas.before:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'res/end_game_background.jpg'
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        BoxLayout:
+            size_hint: 0.6, 1
+            padding: 30
+            orientation: 'vertical'
+            Image:
+                size_hint: 1, 0.6
+                source: 'res/logo.png'
+
+            ImageButton:
+                size_hint: 1, 0.4
+                size: 10, 10
+                source: 'res/play.png'
+                on_press:
+                    root.manager.current = 'pick_lvl';
+                    root.manager.get_screen('pick_lvl').update()
+
+
+<TowerButton>:
+    bt: bt
+    orientation: 'horizontal'
+    Image:
+        source: root.image
+        size_hint: 0.4, 1
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: 0.6, 1
+
+        Label:
+            size_hint: 1, 0.8
+            markup: True
+            text: root.description
+
+        Button:
+            id: bt
+            size_hint: 1, 0.2
+            text: root.bt_text
+            bold: True
+
+
+<LevelPickerScreen>:
+    right_bt_layout: right_bt_layout
+    left_bt_layout: left_bt_layout
+    play_bt_layout: play_bt_layout
+
+    canvas.before:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'res/end_game_background.jpg'
+
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'center'
+        id: right_bt_layout
+
+    AnchorLayout:
+        anchor_x: 'left'
+        anchor_y: 'center'
+        id: left_bt_layout
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        Image:
+            size_hint: 0.65, 0.6
+            source: root.map_img
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        ImageButton:
+            size_hint: 0.63, 0.7
+            source: 'res/border.png'
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'top'
+
+        Image:
+            size_hint: 0.6, 0.15
+            source: root.result_img
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'bottom'
+        id: play_bt_layout
+
+<TowersMenu>:
+    mage_button: mage_button
+    archers_button: archers_button
+    close_button: close_button
+
+    canvas:
+        Color:
+            rgba: 0.2, 0.2, 0.2, 0.8
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+    size_hint: 0.3, 0.5
+    orientation: 'vertical'
+    padding: 8
+
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'top'
+        size_hint: 1, 0.1
+
+        ImageButton:
+            id: close_button
+            size: 30, 30
+            size_hint: None, None
+            source: 'res/close.png'
+
+    TowerButton:
+        bt_text: 'Build'
+        id: mage_button
+        image: 'res/towers/mage.png'
+        description:
+            f'[b]Mage[/b]\nSpeed: low\nDamage: high\nCost: {Mage.cost}'
+
+    TowerButton:
+        bt_text: 'Build'
+        id: archers_button
+        image: 'res/towers/archers.png'
+        description:
+            f'[b]Archers[/b]\nSpeed: high\nDamage: low\nCost: {Archers.cost}'
+
+
+<UpgradeMenu>:
+    upgrade_bt: bt
+    close_button: close_button
+
+    canvas:
+        Color:
+            rgba: 0.2, 0.2, 0.2, 0.8
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+    size_hint: 0.35, 0.3
+    orientation: 'vertical'
+    padding: 8
+
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'top'
+        size_hint: 1, 0.1
+
+        ImageButton:
+            id: close_button
+            size: 30, 30
+            size_hint: None, None
+            source: 'res/close.png'
+
+    TowerButton:
+        bt_text: 'Upgrade'
+        id: bt
+        image: root.img
+        description:
+            f'[b]Cost[/b]: {root.cost}\n{root.description}'
+
+
+<GameScreen>:
+    game_view: gv
+    towers_menu_layout: towers_menu_layout
+
+    GameView:
+        id: gv
+
+    AnchorLayout:
+        anchor_x: 'left'
+        anchor_y: 'top'
+
+        Sign:
+            text: '\n' + gv.hp + gv.gold + gv.wave
+            bold: True
+            color: 0, 0, 0, 1
+            size_hint: 0.15, 0.13
+
+    AnchorLayout:
+        anchor_x: 'right'
+        anchor_y: 'top'
+
+        BoxLayout:
+            size_hint: 0.1, 0.07
+            orientation: 'horizontal'
+
+            ImageButton:
+                source: gv.change_speed_icon
+                on_press: gv.change_speed()
+
+            ImageButton:
+                source: gv.start_stop_icon
+                on_press: gv.change_running()
+
+    AnchorLayout:
+        anchor_x: 'left'
+        anchor_y: 'center'
+        id: towers_menu_layout
+
+
+<EndGameScreen>
+    canvas.before:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: self.background
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        BoxLayout:
+            size_hint: 0.6, 1
+            orientation: 'vertical'
+            Image:
+                size_hint: 1, 0.6
+                source: root.message_image
+
+            ImageButton:
+                size_hint: 1, 0.4
+                source: 'res/go_home.png'
+                on_press:
+                    root.game_screen.game_view.game.refresh_level();
+                    root.manager.current = 'main'
+
+<LooseGameScreen>
+    canvas.before:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'res/end_game_background.jpg'
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        BoxLayout:
+            size_hint: 0.6, 1
+            orientation: 'vertical'
+            Image:
+                size_hint: 1, 0.6
+                source: 'res/game_over.png'
+            BoxLayout:
+                size_hint: 1, 0.4
+                orientation: 'horizontal'
+
+                ImageButton:
+                    source: 'res/reload.png'
+                    on_press:
+                        root.game_screen.game_view.game.refresh_level();
+                        root.game_screen.game_view.start_game();
+                        root.manager.current = 'game'
+
+                ImageButton:
+                    source: 'res/go_home.png'
+                    on_press:
+                        root.game_screen.game_view.game.refresh_level();
+                        root.manager.current = 'main'
+
+<ChangeLevelScreen>
+    canvas.before:
+        Rectangle:
+            size: self.size
+            pos: self.pos
+            source: 'res/end_game_background.jpg'
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        BoxLayout:
+            size_hint: 0.6, 1
+            orientation: 'vertical'
+            Image:
+                size_hint: 1, 0.1
+                source: 'res/level_cleared.png'
+            Image:
+                size_hint: 1, 0.5
+                source: root.stars_img
+
+            ImageButton:
+                size_hint: 1, 0.4
+                source: 'res/play.png'
+                on_press:
+                    root.game_screen.game_view.start_game();
+                    root.manager.current = 'game'
